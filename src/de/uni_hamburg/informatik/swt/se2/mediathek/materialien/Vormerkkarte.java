@@ -37,7 +37,7 @@ public class Vormerkkarte {
 		}	
 	}
 	
-	public void fuegeVermerkerHinzu(List<Kunde> kunden) {
+	public void fuegeVormerkerHinzu(List<Kunde> kunden) {
 		for (Kunde kunde : kunden) {
 			try {
 				_vormerker.put(kunde);
@@ -47,7 +47,7 @@ public class Vormerkkarte {
 		}
 	}
 	
-	public void fuegeEinenVermerkerHinzu(Kunde kunde) {
+	public void fuegeEinenVormerkerHinzu(Kunde kunde) {
 		try {
 			_vormerker.put(kunde);
 		} catch (InterruptedException e) {
@@ -55,11 +55,11 @@ public class Vormerkkarte {
 		}
 	}
 	
-	public void entferneErstenVermerker() {
+	public void entferneErstenVormerker() {
 		_vormerker.poll();
 	}
 	
-	public Kunde getErstenVermerker() {
+	public Kunde getErstenVormerker() {
 		return _vormerker.peek();
 	}
 }
