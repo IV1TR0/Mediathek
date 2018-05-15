@@ -1,0 +1,6 @@
+
+.DS_Store
+.settings/org.eclipse.ltk.core.refactoring.prefs
+*.prefs
+.project
+.classpath
