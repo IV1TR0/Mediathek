@@ -5,6 +5,7 @@ import java.util.List;
 import de.uni_hamburg.informatik.swt.se2.mediathek.fachwerte.Datum;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Kunde;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Verleihkarte;
+import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Vormerkkarte;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.medien.Medium;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.ObservableService;
 
@@ -42,6 +43,18 @@ public interface VerleihService extends ObservableService
      */
     void verleiheAn(Kunde kunde, List<Medium> medien, Datum ausleihDatum)
             throws ProtokollierException;
+    
+    void merkeVor(Kunde kunde, List<Medium> medien) throws Exception;
+    
+    boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien, Kunde kunde);
+    
+    public boolean esSindNochVormerkplaetzeFrei(List<Medium> medien);
+    
+    public boolean kundeHatSchonVorgemerktBei(List<Medium> medien, Kunde kunde);
+    
+    public boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde);
+    
+    public Vormerkkarte getVormerkkarte(Medium medium);
 
     /**
      * Prüft ob die ausgewählten Medium für den Kunde ausleihbar sind

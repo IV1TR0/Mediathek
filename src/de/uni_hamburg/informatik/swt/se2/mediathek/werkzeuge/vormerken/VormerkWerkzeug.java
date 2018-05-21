@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Kunde;
@@ -210,9 +211,12 @@ public class VormerkWerkzeug
         List<Medium> medien = _medienAuflisterWerkzeug.getSelectedMedien();
         Kunde kunde = _kundenAuflisterWerkzeug.getSelectedKunde();
         // TODO für Aufgabenblatt 6 (nicht löschen): Prüfung muss noch eingebaut
-        // werden. Ist dies korrekt imlpementiert, wird der Vormerk-Button gemäß
+        // werden. Ist dies korrekt implementiert, wird der Vormerk-Button gemäß
         // der Anforderungen a), b), c) und e) aktiviert.
-        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty();
+        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty()
+        		&& _verleihService.esSindNochVormerkplaetzeFrei(medien) // Anforderung a)
+        		&& !_verleihService.kundeHatSchonVorgemerktBei(medien, kunde) // Anforderung a)
+        		&& !_verleihService.kundeHatMedienAusgeliehen(medien, kunde); // Anforderung c)
 
         return vormerkenMoeglich;
     }
@@ -224,12 +228,15 @@ public class VormerkWerkzeug
      */
     private void merkeAusgewaehlteMedienVor()
     {
-
         List<Medium> selectedMedien = _medienAuflisterWerkzeug
             .getSelectedMedien();
         Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
         // TODO für Aufgabenblatt 6 (nicht löschen): Vormerken einbauen
-
+        try {
+			_verleihService.merkeVor(selectedKunde, selectedMedien);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
+		}
     }
 
     /**

@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Kunde;
+import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Vormerkkarte;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.medien.Medium;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.ServiceObserver;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.medienbestand.MedienbestandService;
@@ -84,13 +85,27 @@ public class VormerkMedienauflisterWerkzeug extends ObservableSubWerkzeug
             // Entleiher und möglichen Vormerkern ausgestattet werden.
             // Ist dies korrekt implementiert, erscheinen in der Vormerkansicht
             // die Namen des Entleihers und der möglichen 3 Vormerker.
-            Kunde entleiher = null;
-            Kunde vormerker1 = null;
-            Kunde vormerker2 = null;
-            Kunde vormerker3 = null;
-
-            medienFormatierer.add(new VormerkMedienFormatierer(medium,
-                    entleiher, vormerker1, vormerker2, vormerker3));
+        	
+        	Kunde entleiher = null;
+        	if(_verleihService.istVerliehen(medium)) {
+        		entleiher = _verleihService.getVerleihkarteFuer(medium).getEntleiher();
+        	}
+            
+        	List<Kunde> vormerker = new ArrayList<Kunde>();
+        	Vormerkkarte vormerkkarte = _verleihService.getVormerkkarte(medium);
+        	
+        	if(vormerkkarte != null) {
+        		for(int i = 0; i < vormerkkarte.anzahlVormerker(); i++) {
+            		Kunde currentVormerker = vormerkkarte.getErstenVormerkerAndRemove();
+            		vormerker.add(i, currentVormerker);
+            	}
+                medienFormatierer.add(new VormerkMedienFormatierer(medium,
+                        entleiher, vormerker.get(0), vormerker.get(1), vormerker.get(2)));
+        	}else {
+        		medienFormatierer.add(new VormerkMedienFormatierer(medium,
+                        entleiher, null, null, null));
+        	}
+        	
         }
         _ui.getMedienAuflisterTableModel()
             .setMedien(medienFormatierer);

@@ -68,11 +68,14 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 	 * @require initialBestand != null
 	 */
 	public VerleihServiceImpl(KundenstammService kundenstamm, MedienbestandService medienbestand,
-			List<Verleihkarte> initialBestand) {
+			List<Verleihkarte> initialVerleihBestand, List<Vormerkkarte> initialVormerkBestand) {
 		assert kundenstamm != null : "Vorbedingung verletzt: kundenstamm  != null";
 		assert medienbestand != null : "Vorbedingung verletzt: medienbestand  != null";
-		assert initialBestand != null : "Vorbedingung verletzt: initialBestand  != null";
-		_verleihkarten = erzeugeVerleihkartenBestand(initialBestand);
+		assert initialVerleihBestand != null : "Vorbedingung verletzt: initialVerleihBestand  != null";
+		assert initialVormerkBestand != null : "Vorbedingung verletzt: initialVormerkBestand  != null";
+		
+		_verleihkarten = erzeugeVerleihkartenBestand(initialVerleihBestand);
+		_vormerkkarten = erzeugeVormerkkartenBestand(initialVormerkBestand);
 		_kundenstamm = kundenstamm;
 		_medienbestand = medienbestand;
 		_protokollierer = new VerleihProtokollierer();
@@ -85,6 +88,14 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		HashMap<Medium, Verleihkarte> result = new HashMap<Medium, Verleihkarte>();
 		for (Verleihkarte verleihkarte : initialBestand) {
 			result.put(verleihkarte.getMedium(), verleihkarte);
+		}
+		return result;
+	}
+	
+	private HashMap<Medium, Vormerkkarte> erzeugeVormerkkartenBestand(List<Vormerkkarte> initialBestand) {
+		HashMap<Medium, Vormerkkarte> result = new HashMap<Medium, Vormerkkarte>();
+		for (Vormerkkarte vormerkkarte : initialBestand) {
+			result.put(vormerkkarte.getMedium(), vormerkkarte);
 		}
 		return result;
 	}
@@ -186,38 +197,6 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		// schief geht? informiereUeberAenderung in einen finally Block?
 		informiereUeberAenderung();
 	}
-	
-	/**
-	 * Trägt den Kunden als Vormerker bei allen ausgewaehlten Medien ein.
-	 * Hierbei wird ueberprueft, ob es schon 3 Vormerker gibt und,
-	 * ob der Kunde ein ausgewaeltes Medium schon ausgeliehen hat, 
-	 * sodass er dabei es nicht nochmal vormerken darf.
-	 * 
-	 * @param Kunde kunde
-	 * @param List<Medium> medien
-	 */
-	public void merkeVor(Kunde kunde, List<Medium> medien) {
-		for(Medium medium : medien) {
-			if(_vormerkkarten.containsKey(medium)) {
-				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
-				// Jedes Medium kann von maximal drei unterschiedlichen Kunden vorgemerkt werden.
-				if(vormerkkarte.anzahlVormerker() < 3) {
-					// Ein Ausleiher kann ein von ihm ausgeliehenes Medium nicht vormerken.
-					if(!istVerliehenAn(kunde, medium)) {
-						try {
-							vormerkkarte.fuegeEinenVormerkerHinzu(kunde);
-							_vormerkkarten.put(medium, vormerkkarte);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}else {
-				Vormerkkarte vormerkkarte = new Vormerkkarte(medium, kunde);
-				_vormerkkarten.put(medium, vormerkkarte);
-			}
-		}
-	}
 
 	@Override
 	public boolean kundeImBestand(Kunde kunde) {
@@ -279,6 +258,86 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 			}
 		}
 		return result;
+	}
+	
+	// ###
+	// Hier beginnen alle Vormerk-Sachen
+	// ###
+	
+	/**
+	 * Trägt den Kunden als Vormerker bei allen ausgewaehlten Medien ein.
+	 * 
+	 * @param Kunde kunde
+	 * @param List<Medium> medien
+	 */
+	public void merkeVor(Kunde kunde, List<Medium> medien) throws Exception {
+		for(Medium medium : medien) {
+			if(_vormerkkarten.containsKey(medium)) {
+				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
+				vormerkkarte.fuegeEinenVormerkerHinzu(kunde);
+				_vormerkkarten.put(medium, vormerkkarte);
+			}else {
+				Vormerkkarte vormerkkarte = new Vormerkkarte(medium, kunde);
+				_vormerkkarten.put(medium, vormerkkarte);
+			}
+		}
+	}
+	
+	public Vormerkkarte getVormerkkarte(Medium medium) {
+		if(_vormerkkarten.containsKey(medium)) {
+			return _vormerkkarten.get(medium);
+		}else {
+			return null;
+		}
+		
+	}
+	
+	public boolean esSindNochVormerkplaetzeFrei(List<Medium> medien) {
+		for(Medium medium : medien) {
+			if(_vormerkkarten.containsKey(medium)) {
+				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
+				if(vormerkkarte.anzahlVormerker() > 2) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean kundeHatSchonVorgemerktBei(List<Medium> medien, Kunde kunde) {
+		for(Medium medium : medien) {
+			if(_vormerkkarten.containsKey(medium)) {
+				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
+				int anzahlVormerker = vormerkkarte.anzahlVormerker();
+				for(int i = 0; i < anzahlVormerker; i++) {
+					Kunde currentVormerker = vormerkkarte.getErstenVormerkerAndRemove();
+					if(currentVormerker.equals(kunde)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde) {
+		for(Medium medium : medien) {
+			if(istVerliehenAn(kunde, medium)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien, Kunde kunde) {
+		for(Medium medium : medien) {
+			if(_vormerkkarten.containsKey(medium)) {
+				if(!_vormerkkarten.get(medium).getErstenVormerkerAndKeep().equals(kunde)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

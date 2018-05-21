@@ -1,9 +1,11 @@
 package de.uni_hamburg.informatik.swt.se2.mediathek.startup;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
+import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Vormerkkarte;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.kundenstamm.KundenstammService;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.kundenstamm.KundenstammServiceImpl;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.medienbestand.MedienbestandService;
@@ -68,7 +70,7 @@ public class StartUpMediathek_Blatt06
             _kundenstamm = new KundenstammServiceImpl(
                     datenEinleser.getKunden());
             _verleihService = new VerleihServiceImpl(_kundenstamm,
-                    _medienbestand, datenEinleser.getVerleihkarten());
+                    _medienbestand, datenEinleser.getVerleihkarten(), new ArrayList<Vormerkkarte>());
         }
         catch (DateiLeseException e)
         {
