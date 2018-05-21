@@ -8,12 +8,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class Vormerkkarte {
 
-	// Eigenschaften einer Vermerkkarte
+	// Eigenschaften einer Vormerkkarte
 	private final Medium _medium;
 	private final ArrayBlockingQueue<Kunde> _vormerker = new ArrayBlockingQueue<Kunde>(3);
 
 	/**
-	 * Initialisert eine neue Vermerkkarte mit den gegebenen Daten.
+	 * Initialisert eine neue Vormerkkarte mit den gegebenen Daten.
 	 * 
 	 * @param Medium
 	 *            medium Ein Medium.
@@ -25,11 +25,7 @@ public class Vormerkkarte {
 	 */
 	public Vormerkkarte(Medium medium, Kunde vormerker) {
 		_medium = medium;
-		try {
-			_vormerker.put(vormerker);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		_vormerker.add(vormerker);
 	}
 
 	/**
@@ -42,11 +38,7 @@ public class Vormerkkarte {
 	public void fuegeVormerkerHinzu(List<Kunde> kunden) throws Exception {
 		for (Kunde kunde : kunden) {
 			if (!hatKundeSchonVorgemerkt(kunde)) {
-				try {
-					_vormerker.put(kunde);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				_vormerker.add(kunde);
 			} else {
 				throw new Exception("Kunde hat Medium schon vorgemerkt.");
 			}
@@ -60,18 +52,15 @@ public class Vormerkkarte {
 	 *            kunde
 	 * @throws Exception
 	 */
-	public void fuegeEinenVormerkerHinzu(Kunde kunde) throws Exception {
-		try {
-			_vormerker.put(kunde);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	public void fuegeEinenVormerkerHinzu(Kunde kunde) throws IllegalStateException {
+		_vormerker.add(kunde);
 	}
 
 	/**
 	 * Prüft, ob ein Kunde schon als Vormerker eingetragen ist.
 	 * 
-	 * @param Kunde kunde
+	 * @param Kunde
+	 *            kunde
 	 * @return boolean
 	 */
 	private boolean hatKundeSchonVorgemerkt(Kunde kunde) {

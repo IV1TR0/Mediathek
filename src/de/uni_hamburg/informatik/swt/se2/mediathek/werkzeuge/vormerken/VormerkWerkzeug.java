@@ -235,7 +235,7 @@ public class VormerkWerkzeug
         try {
 			_verleihService.merkeVor(selectedKunde, selectedMedien);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Es koennen keine weiteren Vormerker mehr entgegengenommen werden.", "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
 		}
     }
 

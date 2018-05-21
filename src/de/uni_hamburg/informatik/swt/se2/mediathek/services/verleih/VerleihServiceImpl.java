@@ -275,8 +275,7 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 			if(_vormerkkarten.containsKey(medium)) {
 				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
 				vormerkkarte.fuegeEinenVormerkerHinzu(kunde);
-				_vormerkkarten.put(medium, vormerkkarte);
-			}else {
+			} else {
 				Vormerkkarte vormerkkarte = new Vormerkkarte(medium, kunde);
 				_vormerkkarten.put(medium, vormerkkarte);
 			}
