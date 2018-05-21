@@ -187,6 +187,15 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		informiereUeberAenderung();
 	}
 	
+	/**
+	 * Trägt den Kunden als Vormerker bei allen ausgewaehlten Medien ein.
+	 * Hierbei wird ueberprueft, ob es schon 3 Vormerker gibt und,
+	 * ob der Kunde ein ausgewaeltes Medium schon ausgeliehen hat, 
+	 * sodass er dabei es nicht nochmal vormerken darf.
+	 * 
+	 * @param Kunde kunde
+	 * @param List<Medium> medien
+	 */
 	public void merkeVor(Kunde kunde, List<Medium> medien) {
 		for(Medium medium : medien) {
 			if(_vormerkkarten.containsKey(medium)) {
