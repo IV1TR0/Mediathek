@@ -16,43 +16,48 @@ public class Vormerkkarte {
      * Initialisert eine neue Vermerkkarte mit den gegebenen Daten.
      * 
      * @param medium Ein Medium.
-     * @param vormerker1 Ein Kunde, der das Medium vormerken möchte.
-     * @param vormerker2 Ein Kunde, der das Medium vormerken möchte.
-     * @param vormerker3 Ein Kunde, der das Medium vormerken möchte.
-     * 
+     * @param vormerker Ein Kunde, der das Medium vormerken möchte.
      * 
      * @require medium != null
-     * @require vormerker1 != null
-     * @require vormerker2 != null
-     * @require vormerker3 != null
+     * @require vormerker != null
      */
-	public Vormerkkarte(Medium medium, Kunde vormerker1, Kunde vormerker2, Kunde vormerker3) {
+	public Vormerkkarte(Medium medium, Kunde vormerker) {
 		_medium = medium;
 		try {
-			_vormerker.put(vormerker1);
-			_vormerker.put(vormerker2);
-			_vormerker.put(vormerker3);
+			_vormerker.put(vormerker);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}	
 	}
 	
-	public void fuegeVormerkerHinzu(List<Kunde> kunden) {
+	public void fuegeVormerkerHinzu(List<Kunde> kunden) throws Exception{
 		for (Kunde kunde : kunden) {
+			if(!hatKundeSchonVorgemerkt(kunde)) {
+				try {
+					_vormerker.put(kunde);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} else {
+				throw new Exception("Kunde hat Medium schon vorgemerkt.");
+			}
+		}
+	}
+	
+	public void fuegeEinenVormerkerHinzu(Kunde kunde) throws Exception {
+		if(!hatKundeSchonVorgemerkt(kunde)) {
 			try {
 				_vormerker.put(kunde);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}else {
+			throw new Exception("Kunde hat Medium schon vorgemerkt.");
 		}
 	}
 	
-	public void fuegeEinenVormerkerHinzu(Kunde kunde) {
-		try {
-			_vormerker.put(kunde);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	private boolean hatKundeSchonVorgemerkt(Kunde kunde) {
+		return (_vormerker.contains(kunde) ? true : false);
 	}
 	
 	public void entferneErstenVormerker() {
@@ -61,5 +66,28 @@ public class Vormerkkarte {
 	
 	public Kunde getErstenVormerker() {
 		return _vormerker.peek();
+	}
+	
+	public Medium getMedium() {
+		return _medium;
+	}
+	
+	// Zusatz: Baut die Möglichkeit zum Stornieren einer Vormerkung in die Mediathek ein.
+	public void storniereVormerkung(Kunde kunde) throws Exception {
+		if(_vormerker.contains(kunde)) {
+			int amountVormerker = _vormerker.size();
+			for(int i = 0; i < amountVormerker; i++) {
+				Kunde currentVormerker = _vormerker.poll();
+				if(currentVormerker != kunde) {
+					_vormerker.add(currentVormerker);
+				}
+			}
+		}else {
+			throw new Exception("Kunde hat Medium nicht vorgemerkt.");
+		}
+	}
+	
+	public int anzahlVormerker() {
+		return _vormerker.size();
 	}
 }

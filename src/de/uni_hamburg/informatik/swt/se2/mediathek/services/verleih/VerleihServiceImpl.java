@@ -2,6 +2,7 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.services.verleih;
 
 import java.util.ArrayList;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,10 +187,27 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		informiereUeberAenderung();
 	}
 	
-	// Hier starten alle Vormerk-related Methoden
-	public void vormerkeAn(Kunde kunde, List<Medium> medien) {
-		// TODO:
-		// Hier fehlt offensichtlich noch die Implementation...
+	public void merkeVor(Kunde kunde, List<Medium> medien) {
+		for(Medium medium : medien) {
+			if(_vormerkkarten.containsKey(medium)) {
+				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
+				// Jedes Medium kann von maximal drei unterschiedlichen Kunden vorgemerkt werden.
+				if(vormerkkarte.anzahlVormerker() < 3) {
+					// Ein Ausleiher kann ein von ihm ausgeliehenes Medium nicht vormerken.
+					if(!istVerliehenAn(kunde, medium)) {
+						try {
+							vormerkkarte.fuegeEinenVormerkerHinzu(kunde);
+							_vormerkkarten.put(medium, vormerkkarte);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}else {
+				Vormerkkarte vormerkkarte = new Vormerkkarte(medium, kunde);
+				_vormerkkarten.put(medium, vormerkkarte);
+			}
+		}
 	}
 
 	@Override
