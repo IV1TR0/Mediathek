@@ -5,3 +5,5 @@
 .project
 .classpath
 *.class
+*.class
+bin/de/uni_hamburg/informatik/swt/se2/mediathek/services/verleih/VerleihService.class

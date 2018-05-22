@@ -1,6 +1,7 @@
 package de.uni_hamburg.informatik.swt.se2.mediathek.werkzeuge.subwerkzeuge.vormerkmedienauflister;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -25,161 +26,137 @@ import de.uni_hamburg.informatik.swt.se2.mediathek.werkzeuge.ObservableSubWerkze
  * @author SE2-Team
  * @version SoSe 2017
  */
-public class VormerkMedienauflisterWerkzeug extends ObservableSubWerkzeug
-{
-    private VormerkMedienauflisterUI _ui;
-    private MedienbestandService _medienbestand;
-    private final VerleihService _verleihService;
+public class VormerkMedienauflisterWerkzeug extends ObservableSubWerkzeug {
+	private VormerkMedienauflisterUI _ui;
+	private MedienbestandService _medienbestand;
+	private final VerleihService _verleihService;
 
-    /**
-     * Initialisiert ein neues VormerkMedienauflisterWerkzeug. Es wird die
-     * Benutzungsoberfläche zum Darstellen der Medien erzeugt.
-     * 
-     * @param medienbestand Der Medienbestand.
-     * @param verleihService Der Verleih-Service.
-     * 
-     * @require medienbestand != null
-     * @require verleihService != null
-     */
-    public VormerkMedienauflisterWerkzeug(MedienbestandService medienbestand,
-            VerleihService verleihService)
-    {
-        assert medienbestand != null : "Vorbedingung verletzt: medienbestand != null";
-        assert verleihService != null : "Vorbedingung verletzt: verleihService != null";
+	/**
+	 * Initialisiert ein neues VormerkMedienauflisterWerkzeug. Es wird die
+	 * Benutzungsoberfläche zum Darstellen der Medien erzeugt.
+	 * 
+	 * @param medienbestand
+	 *            Der Medienbestand.
+	 * @param verleihService
+	 *            Der Verleih-Service.
+	 * 
+	 * @require medienbestand != null
+	 * @require verleihService != null
+	 */
+	public VormerkMedienauflisterWerkzeug(MedienbestandService medienbestand, VerleihService verleihService) {
+		assert medienbestand != null : "Vorbedingung verletzt: medienbestand != null";
+		assert verleihService != null : "Vorbedingung verletzt: verleihService != null";
 
-        _medienbestand = medienbestand;
-        _verleihService = verleihService;
+		_medienbestand = medienbestand;
+		_verleihService = verleihService;
 
-        // UI wird erzeugt.
-        _ui = new VormerkMedienauflisterUI();
+		// UI wird erzeugt.
+		_ui = new VormerkMedienauflisterUI();
 
-        // Die Ausleihaktionen werden erzeugt und an der UI registriert.
-        registriereUIAktionen();
+		// Die Ausleihaktionen werden erzeugt und an der UI registriert.
+		registriereUIAktionen();
 
-        // Die Beobachter werden erzeugt und an den Services registriert.
-        registriereServiceBeobachter();
+		// Die Beobachter werden erzeugt und an den Services registriert.
+		registriereServiceBeobachter();
 
-        // Die anzuzeigenden Materialien werden in den UI-Widgets gesetzt.
-        setzeAnzuzeigendeMedien();
-    }
+		// Die anzuzeigenden Materialien werden in den UI-Widgets gesetzt.
+		setzeAnzuzeigendeMedien();
+	}
 
-    /**
-     * Registriert die Aktionen, die bei bestimmten UI-Events ausgeführt werden.
-     */
-    private void registriereUIAktionen()
-    {
-        registriereMedienAnzeigenAktion();
-    }
+	/**
+	 * Registriert die Aktionen, die bei bestimmten UI-Events ausgeführt werden.
+	 */
+	private void registriereUIAktionen() {
+		registriereMedienAnzeigenAktion();
+	}
 
-    /**
-     * Holt und setzt die Medieninformationen.
-     */
-    private void setzeAnzuzeigendeMedien()
-    {
-        List<Medium> medienListe = _medienbestand.getMedien();
-        List<VormerkMedienFormatierer> medienFormatierer = new ArrayList<VormerkMedienFormatierer>();
-        for (Medium medium : medienListe)
-        {
-            // TODO für Aufgabenblatt 6 (nicht löschen): Die
-            // VormerkMedienFormatierer müssen noch mit einem möglichen
-            // Entleiher und möglichen Vormerkern ausgestattet werden.
-            // Ist dies korrekt implementiert, erscheinen in der Vormerkansicht
-            // die Namen des Entleihers und der möglichen 3 Vormerker.
-        	
-        	Kunde entleiher = null;
-        	if(_verleihService.istVerliehen(medium)) {
-        		entleiher = _verleihService.getVerleihkarteFuer(medium).getEntleiher();
-        	}
-            
-        	List<Kunde> vormerker = new ArrayList<Kunde>();
-        	Vormerkkarte vormerkkarte = _verleihService.getVormerkkarte(medium);
-        	
-        	if(vormerkkarte != null) {
-        		for(int i = 0; i < vormerkkarte.anzahlVormerker(); i++) {
-            		Kunde currentVormerker = vormerkkarte.getErstenVormerkerAndRemove();
-            		vormerker.add(i, currentVormerker);
-            	}
-                medienFormatierer.add(new VormerkMedienFormatierer(medium,
-                        entleiher, vormerker.get(0), vormerker.get(1), vormerker.get(2)));
-        	}else {
-        		medienFormatierer.add(new VormerkMedienFormatierer(medium,
-                        entleiher, null, null, null));
-        	}
-        	
-        }
-        _ui.getMedienAuflisterTableModel()
-            .setMedien(medienFormatierer);
-    }
+	/**
+	 * Holt und setzt die Medieninformationen.
+	 */
+	private void setzeAnzuzeigendeMedien() {
+		List<Medium> medienListe = _medienbestand.getMedien();
+		List<VormerkMedienFormatierer> medienFormatierer = new ArrayList<VormerkMedienFormatierer>();
+		for (Medium medium : medienListe) {
+			// TODO für Aufgabenblatt 6 (nicht löschen): Die
+			// VormerkMedienFormatierer müssen noch mit einem möglichen
+			// Entleiher und möglichen Vormerkern ausgestattet werden.
+			// Ist dies korrekt implementiert, erscheinen in der Vormerkansicht
+			// die Namen des Entleihers und der möglichen 3 Vormerker.
 
-    /**
-     * Registiert die Aktion, die ausgeführt wird, wenn ein Medium ausgewählt
-     * wird.
-     */
-    private void registriereMedienAnzeigenAktion()
-    {
-        _ui.getMedienAuflisterTable()
-            .getSelectionModel()
-            .addListSelectionListener(new ListSelectionListener()
-            {
-                @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    informiereUeberAenderung();
-                }
-            });
-    }
+			Kunde entleiher = null;
+			if (_verleihService.istVerliehen(medium)) {
+				entleiher = _verleihService.getVerleihkarteFuer(medium).getEntleiher();
+			}
+			
+			Kunde[] vormerker = new Kunde[3];
+			Arrays.fill(vormerker, null);
+			
+			if(_verleihService.istVorgemerkt(medium)) {
+				Vormerkkarte vormerkkarte = _verleihService.getVormerkkarteFuer(medium);
+				int anzahlVormerker = vormerkkarte.anzahlVormerker();
+				for(int i = 0; i < anzahlVormerker; i++ ) {
+					vormerker[i] = vormerkkarte.getErstenVormerkerAndRemove();
+				}
+			}
+			medienFormatierer.add(new VormerkMedienFormatierer(medium, entleiher, vormerker[0], vormerker[1], vormerker[2]));
+		}
+		_ui.getMedienAuflisterTableModel().setMedien(medienFormatierer);
+	}
 
-    /**
-     * Registriert die Beobacheter für die Services.
-     */
-    private void registriereServiceBeobachter()
-    {
-        ServiceObserver beobachter = new ServiceObserver()
-        {
-            @Override
-            public void reagiereAufAenderung()
-            {
-                // Wenn ein Service eine Änderung mitteilt, dann wird
-                // die angezeigte Liste aller Medien aktualisiert:
-                setzeAnzuzeigendeMedien();
-            }
-        };
-        _medienbestand.registriereBeobachter(beobachter);
-        _verleihService.registriereBeobachter(beobachter);
-    }
+	/**
+	 * Registiert die Aktion, die ausgeführt wird, wenn ein Medium ausgewählt wird.
+	 */
+	private void registriereMedienAnzeigenAktion() {
+		_ui.getMedienAuflisterTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				informiereUeberAenderung();
+			}
+		});
+	}
 
-    /**
-     * Gibt die Liste der vom Benutzer selektierten Medien zurück.
-     * 
-     * @return Die Liste der vom Benutzer selektierten Medien.
-     * 
-     * @ensure result != null
-     */
-    public List<Medium> getSelectedMedien()
-    {
-        List<Medium> result = new ArrayList<Medium>();
-        int[] selectedRows = _ui.getMedienAuflisterTable()
-            .getSelectedRows();
-        VormerkMedienTableModel medienTableModel = _ui
-            .getMedienAuflisterTableModel();
-        for (int zeile : selectedRows)
-        {
-            if (medienTableModel.zeileExistiert(zeile))
-            {
-                Medium medium = medienTableModel.getMediumFuerZeile(zeile);
-                result.add(medium);
-            }
-        }
-        return result;
-    }
+	/**
+	 * Registriert die Beobacheter für die Services.
+	 */
+	private void registriereServiceBeobachter() {
+		ServiceObserver beobachter = new ServiceObserver() {
+			@Override
+			public void reagiereAufAenderung() {
+				// Wenn ein Service eine Änderung mitteilt, dann wird
+				// die angezeigte Liste aller Medien aktualisiert:
+				setzeAnzuzeigendeMedien();
+			}
+		};
+		_medienbestand.registriereBeobachter(beobachter);
+		_verleihService.registriereBeobachter(beobachter);
+	}
 
-    /**
-     * Gibt das Panel dieses Subwerkzeugs zurück.
-     * 
-     * @ensure result != null
-     */
-    public JPanel getUIPanel()
-    {
-        return _ui.getUIPanel();
-    }
+	/**
+	 * Gibt die Liste der vom Benutzer selektierten Medien zurück.
+	 * 
+	 * @return Die Liste der vom Benutzer selektierten Medien.
+	 * 
+	 * @ensure result != null
+	 */
+	public List<Medium> getSelectedMedien() {
+		List<Medium> result = new ArrayList<Medium>();
+		int[] selectedRows = _ui.getMedienAuflisterTable().getSelectedRows();
+		VormerkMedienTableModel medienTableModel = _ui.getMedienAuflisterTableModel();
+		for (int zeile : selectedRows) {
+			if (medienTableModel.zeileExistiert(zeile)) {
+				Medium medium = medienTableModel.getMediumFuerZeile(zeile);
+				result.add(medium);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Gibt das Panel dieses Subwerkzeugs zurück.
+	 * 
+	 * @ensure result != null
+	 */
+	public JPanel getUIPanel() {
+		return _ui.getUIPanel();
+	}
 }

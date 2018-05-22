@@ -44,7 +44,7 @@ public interface VerleihService extends ObservableService
     void verleiheAn(Kunde kunde, List<Medium> medien, Datum ausleihDatum)
             throws ProtokollierException;
     
-    void merkeVor(Kunde kunde, List<Medium> medien) throws Exception;
+    void merkeVor(Kunde kunde, List<Medium> medien);
     
     boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien, Kunde kunde);
     
@@ -54,7 +54,9 @@ public interface VerleihService extends ObservableService
     
     public boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde);
     
-    public Vormerkkarte getVormerkkarte(Medium medium);
+    public Vormerkkarte getVormerkkarteFuer(Medium medium);
+    
+    public boolean istVorgemerkt(Medium medium);
 
     /**
      * Prüft ob die ausgewählten Medium für den Kunde ausleihbar sind

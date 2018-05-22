@@ -270,7 +270,7 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 	 * @param Kunde kunde
 	 * @param List<Medium> medien
 	 */
-	public void merkeVor(Kunde kunde, List<Medium> medien) throws Exception {
+	public void merkeVor(Kunde kunde, List<Medium> medien) {
 		for(Medium medium : medien) {
 			if(_vormerkkarten.containsKey(medium)) {
 				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
@@ -280,9 +280,20 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 				_vormerkkarten.put(medium, vormerkkarte);
 			}
 		}
+		informiereUeberAenderung();
 	}
 	
-	public Vormerkkarte getVormerkkarte(Medium medium) {
+	public boolean istVorgemerkt(Medium medium) {
+		assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumExistiert(medium)";
+		return _vormerkkarten.get(medium) != null;
+	}
+	
+	public void erstelleLeereVormerkkarte(Medium medium) {
+		Vormerkkarte vormerkkarte = new Vormerkkarte(medium, null);
+		_vormerkkarten.put(medium, vormerkkarte);
+	}
+	
+	public Vormerkkarte getVormerkkarteFuer(Medium medium) {
 		if(_vormerkkarten.containsKey(medium)) {
 			return _vormerkkarten.get(medium);
 		}else {
