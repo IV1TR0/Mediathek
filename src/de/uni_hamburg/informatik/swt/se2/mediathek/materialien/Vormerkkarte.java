@@ -23,26 +23,9 @@ public class Vormerkkarte {
 	 * @require medium != null
 	 * @require vormerker != null
 	 */
-	public Vormerkkarte(Medium medium, Kunde vormerker) {
+	public Vormerkkarte(Kunde vormerker, Medium medium) {
 		_medium = medium;
 		_vormerker.add(vormerker);
-	}
-
-	/**
-	 * Fuegt mehrere Vormerker zur Vormerkkarte hinzu.
-	 * 
-	 * @param List<Kunde>
-	 *            kunden
-	 * @throws Exception
-	 */
-	public void fuegeVormerkerHinzu(List<Kunde> kunden) throws Exception {
-		for (Kunde kunde : kunden) {
-			if (!hatKundeSchonVorgemerkt(kunde)) {
-				_vormerker.add(kunde);
-			} else {
-				throw new Exception("Kunde hat Medium schon vorgemerkt.");
-			}
-		}
 	}
 
 	/**
@@ -52,7 +35,7 @@ public class Vormerkkarte {
 	 *            kunde
 	 * @throws Exception
 	 */
-	public void fuegeEinenVormerkerHinzu(Kunde kunde) throws IllegalStateException {
+	public void fuegeEinenVormerkerHinzu(Kunde kunde) {
 		_vormerker.add(kunde);
 	}
 
@@ -63,8 +46,11 @@ public class Vormerkkarte {
 	 *            kunde
 	 * @return boolean
 	 */
-	private boolean hatKundeSchonVorgemerkt(Kunde kunde) {
-		return (_vormerker.contains(kunde) ? true : false);
+	public boolean hatKundeSchonVorgemerkt(Kunde kunde) {
+		System.out.println("Kunde: " + kunde.getNachname());
+		System.out.println("Anzahl Vormerker: " + _vormerker.size());
+		System.out.println("hatKundeSchonVorgemerkt(): " + _vormerker.contains(kunde));
+		return _vormerker.contains(kunde);
 	}
 
 	/**

@@ -269,17 +269,28 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 	 * 
 	 * @param Kunde kunde
 	 * @param List<Medium> medien
+	 * 
+	 * @require kundeImBestand == true
+     * @require istVormerkenMoeglich == true
 	 */
-	public void merkeVor(Kunde kunde, List<Medium> medien) {
-		for(Medium medium : medien) {
+	public void merkeVor(Kunde kunde, List<Medium> medien){
+		assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
+		assert istVormerkenMoeglich(kunde, medien) : "Vorbedingung verletzt: istVerleihenMoeglich(kunde, medien)";
+
+		for (Medium medium : medien) {
 			if(_vormerkkarten.containsKey(medium)) {
-				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
-				vormerkkarte.fuegeEinenVormerkerHinzu(kunde);
-			} else {
-				Vormerkkarte vormerkkarte = new Vormerkkarte(medium, kunde);
+				Vormerkkarte neueVormerkkarte = _vormerkkarten.get(medium);
+				neueVormerkkarte.fuegeEinenVormerkerHinzu(kunde);
+				System.out.println("Anzahl Vormerker nachm einfuegen: " + neueVormerkkarte.anzahlVormerker());
+				_vormerkkarten.put(medium, neueVormerkkarte);
+			}else {
+				Vormerkkarte vormerkkarte = new Vormerkkarte(kunde, medium);
 				_vormerkkarten.put(medium, vormerkkarte);
 			}
+			//_protokollierer.protokolliere(VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
 		}
+		// Was passiert wenn das Protokollieren mitten in der Schleife
+		// schief geht? informiereUeberAenderung in einen finally Block?
 		informiereUeberAenderung();
 	}
 	
@@ -288,25 +299,59 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		return _vormerkkarten.get(medium) != null;
 	}
 	
-	public void erstelleLeereVormerkkarte(Medium medium) {
-		Vormerkkarte vormerkkarte = new Vormerkkarte(medium, null);
-		_vormerkkarten.put(medium, vormerkkarte);
-	}
-	
 	public Vormerkkarte getVormerkkarteFuer(Medium medium) {
 		if(_vormerkkarten.containsKey(medium)) {
 			return _vormerkkarten.get(medium);
 		}else {
 			return null;
 		}
-		
 	}
 	
-	public boolean esSindNochVormerkplaetzeFrei(List<Medium> medien) {
+	public boolean istVormerkenMoeglich(Kunde kunde, List<Medium> medien) {
+		assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
+		assert medienImBestand(medien) : "Vorbedingung verletzt: medienImBestand(medien)";
+
+		boolean kundeHatAusgeliehen = kundeHatMedienAusgeliehen(medien, kunde);
+		boolean kundeHatVorgemerkt = kundeHatSchonVorgemerktBei(medien, kunde);
+		boolean vormerkPlaetzeFrei = sindVormerkPlaetzeFrei(medien);
+		
+		boolean vormerkenMoeglich = !kundeHatAusgeliehen && !kundeHatVorgemerkt && vormerkPlaetzeFrei;
+		
+		System.out.println("kundeHatAusgeliehen: " + kundeHatAusgeliehen);
+		System.out.println("kundeHatVorgemerkt: " + kundeHatVorgemerkt);
+		System.out.println("vormerkPlaetzeFrei: " + vormerkPlaetzeFrei);
+		System.out.println("vormerkenMoeglich: " + vormerkenMoeglich);
+		System.out.println("-------");
+		
+		return vormerkenMoeglich;
+	}
+	
+	public boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien, Kunde kunde) {
 		for(Medium medium : medien) {
 			if(_vormerkkarten.containsKey(medium)) {
 				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
-				if(vormerkkarte.anzahlVormerker() > 2) {
+				Kunde ersterVormerker = vormerkkarte.getErstenVormerkerAndKeep();
+				if(ersterVormerker != null) {
+					System.out.println("ersterVormerker: " + ersterVormerker.toString());
+					System.out.println("kunde: " + kunde.toString());
+					if(!ersterVormerker.equals(kunde)) {
+						return false;
+					}
+				}else {
+					System.out.println("Noch keine Vormerker");
+				}
+			}
+		}
+		return true;
+	}
+	
+	// Private Vormerk-Methoden
+	
+	private boolean sindVormerkPlaetzeFrei(List<Medium> medien) {
+		for(Medium medium : medien) {
+			if(_vormerkkarten.containsKey(medium)) {
+				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
+				if(vormerkkarte.anzahlVormerker() >= 3) {
 					return false;
 				}
 			}
@@ -314,23 +359,21 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		return true;
 	}
 	
-	public boolean kundeHatSchonVorgemerktBei(List<Medium> medien, Kunde kunde) {
+	private boolean kundeHatSchonVorgemerktBei(List<Medium> medien, Kunde kunde) {
 		for(Medium medium : medien) {
 			if(_vormerkkarten.containsKey(medium)) {
-				Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
-				int anzahlVormerker = vormerkkarte.anzahlVormerker();
-				for(int i = 0; i < anzahlVormerker; i++) {
-					Kunde currentVormerker = vormerkkarte.getErstenVormerkerAndRemove();
-					if(currentVormerker.equals(kunde)) {
-						return true;
-					}
+				boolean state = _vormerkkarten.get(medium).hatKundeSchonVorgemerkt(kunde);
+				if(state) {
+					System.out.println("kundeHatSchonVorgemerktBei(): true");
+					return true;
 				}
 			}
 		}
+		System.out.println("kundeHatSchonVorgemerktBei(): false");
 		return false;
 	}
 	
-	public boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde) {
+	private boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde) {
 		for(Medium medium : medien) {
 			if(istVerliehenAn(kunde, medium)) {
 				return true;
@@ -338,16 +381,4 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 		}
 		return false;
 	}
-	
-	public boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien, Kunde kunde) {
-		for(Medium medium : medien) {
-			if(_vormerkkarten.containsKey(medium)) {
-				if(!_vormerkkarten.get(medium).getErstenVormerkerAndKeep().equals(kunde)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 }

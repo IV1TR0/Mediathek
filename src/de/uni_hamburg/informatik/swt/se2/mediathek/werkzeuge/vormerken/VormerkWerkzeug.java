@@ -214,10 +214,7 @@ public class VormerkWerkzeug
         // TODO für Aufgabenblatt 6 (nicht löschen): Prüfung muss noch eingebaut
         // werden. Ist dies korrekt implementiert, wird der Vormerk-Button gemäß
         // der Anforderungen a), b), c) und e) aktiviert.
-        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty()
-        		&& _verleihService.esSindNochVormerkplaetzeFrei(medien) // Anforderung a)
-        		&& !_verleihService.kundeHatSchonVorgemerktBei(medien, kunde) // Anforderung a)
-        		&& !_verleihService.kundeHatMedienAusgeliehen(medien, kunde); // Anforderung c)
+        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty() && _verleihService.istVormerkenMoeglich(kunde, medien);
 
         return vormerkenMoeglich;
     }
@@ -236,7 +233,7 @@ public class VormerkWerkzeug
         try {
 			_verleihService.merkeVor(selectedKunde, selectedMedien);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Es koennen keine weiteren Vormerker mehr entgegengenommen werden.", "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
 		}
     }
 

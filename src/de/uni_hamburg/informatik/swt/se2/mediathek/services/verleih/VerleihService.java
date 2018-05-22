@@ -48,15 +48,11 @@ public interface VerleihService extends ObservableService
     
     boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien, Kunde kunde);
     
-    public boolean esSindNochVormerkplaetzeFrei(List<Medium> medien);
-    
-    public boolean kundeHatSchonVorgemerktBei(List<Medium> medien, Kunde kunde);
-    
-    public boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde);
-    
     public Vormerkkarte getVormerkkarteFuer(Medium medium);
     
     public boolean istVorgemerkt(Medium medium);
+    
+    public boolean istVormerkenMoeglich(Kunde kunde, List<Medium> medien);
 
     /**
      * Prüft ob die ausgewählten Medium für den Kunde ausleihbar sind
