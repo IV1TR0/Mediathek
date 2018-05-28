@@ -68,7 +68,7 @@ public class VormerkkarteTest
     }
 
     @Test
-    public void testvormerkeranhaengen()
+    public void testfuegeEinenVormerkerHinzu()
     {
         Vormerkkarte karte2 = _karte;
         Kunde kunde2 = new Kunde(new Kundennummer(654321), "ich", "du");
@@ -76,6 +76,21 @@ public class VormerkkarteTest
         assertTrue(karte2.hatKundeSchonVorgemerkt(kunde2));
     }
 
+    @Test
+    public void testentferneErstenVormerker()
+    {
+    	Vormerkkarte karte2 = _karte;
+    	karte2.entferneErstenVormerker();
+        Kunde kunde2 = new Kunde(new Kundennummer(654321), "ich", "du");
+        karte2.fuegeEinenVormerkerHinzu(kunde2);
+        karte2.entferneErstenVormerker();
+        assertFalse(karte2.hatKundeSchonVorgemerkt(kunde2));
+        kunde2 = new Kunde(new Kundennummer(123457), "i", "bims");
+        karte2.fuegeEinenVormerkerHinzu(kunde2);
+        assertEquals(kunde2, karte2.getErstenVormerkerAndRemove());
+        assertFalse(karte2.hatKundeSchonVorgemerkt(kunde2));
+    }
+    
     @Test
     public void testgetFormatiertenString()
     {
