@@ -70,7 +70,8 @@ public class StartUpMediathek_Blatt06
             _kundenstamm = new KundenstammServiceImpl(
                     datenEinleser.getKunden());
             _verleihService = new VerleihServiceImpl(_kundenstamm,
-                    _medienbestand, datenEinleser.getVerleihkarten(), new ArrayList<Vormerkkarte>());
+                    _medienbestand, datenEinleser.getVerleihkarten(),
+                    new ArrayList<Vormerkkarte>());
         }
         catch (DateiLeseException e)
         {

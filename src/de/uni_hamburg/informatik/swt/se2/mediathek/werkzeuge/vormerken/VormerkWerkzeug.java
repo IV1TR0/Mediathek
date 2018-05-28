@@ -214,7 +214,8 @@ public class VormerkWerkzeug
         // TODO für Aufgabenblatt 6 (nicht löschen): Prüfung muss noch eingebaut
         // werden. Ist dies korrekt implementiert, wird der Vormerk-Button gemäß
         // der Anforderungen a), b), c) und e) aktiviert.
-        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty() && _verleihService.istVormerkenMoeglich(kunde, medien);
+        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty()
+                && _verleihService.istVormerkenMoeglich(kunde, medien);
 
         return vormerkenMoeglich;
     }
@@ -230,11 +231,15 @@ public class VormerkWerkzeug
             .getSelectedMedien();
         Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
         // TODO für Aufgabenblatt 6 (nicht löschen): Vormerken einbauen
-        try {
-			_verleihService.merkeVor(selectedKunde, selectedMedien);
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
-		}
+        try
+        {
+            _verleihService.merkeVor(selectedKunde, selectedMedien);
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Fehlermeldung",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**

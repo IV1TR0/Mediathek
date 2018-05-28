@@ -33,7 +33,7 @@ public class VerleihServiceImplTest
     private VerleihService _service;
     private List<Medium> _medienListe;
     private Kunde _vormerkkunde;
-//    private Medium _vormerkmedium;
+    //    private Medium _vormerkmedium;
 
     public VerleihServiceImplTest()
     {
@@ -56,7 +56,7 @@ public class VerleihServiceImplTest
         medienbestand.fuegeMediumEin(medium);
         medium = new CD("CD4", "baz", "foo", 123);
         medienbestand.fuegeMediumEin(medium);
-//        _vormerkmedium = medium;
+        //        _vormerkmedium = medium;
         _medienListe = medienbestand.getMedien();
         _service = new VerleihServiceImpl(kundenstamm, medienbestand,
                 new ArrayList<Verleihkarte>(), new ArrayList<Vormerkkarte>());
@@ -152,21 +152,23 @@ public class VerleihServiceImplTest
                 Collections.singletonList(_medienListe.get(2)), _datum);
         assertFalse(ereignisse[0]);
     }
-    
+
     @Test
     public void testVormerken()
     {
-//    	List<Medium> medienListe = new ArrayList<Medium>();
-//    	medienListe.add(_vormerkmedium);
-//    	_service.merkeVor(_vormerkkunde, medienListe);
-//    	assertEquals(new Vormerkkarte(_vormerkkunde, _vormerkmedium), _service.getVormerkkarteFuer(_vormerkmedium));
-//    	
-    	_service.merkeVor(_vormerkkunde, _medienListe);
-    	for (Medium medium: _medienListe)
-    	{
-    	assertEquals(new Vormerkkarte(_vormerkkunde, medium), _service.getVormerkkarteFuer(medium));
-    	if (_service.getVormerkkarteFuer(medium) == null) System.out.println("Keine Vormerkkarte vorhanden - Fehler!");
-    	}
+        //    	List<Medium> medienListe = new ArrayList<Medium>();
+        //    	medienListe.add(_vormerkmedium);
+        //    	_service.merkeVor(_vormerkkunde, medienListe);
+        //    	assertEquals(new Vormerkkarte(_vormerkkunde, _vormerkmedium), _service.getVormerkkarteFuer(_vormerkmedium));
+        //    	
+        _service.merkeVor(_vormerkkunde, _medienListe);
+        for (Medium medium : _medienListe)
+        {
+            assertEquals(new Vormerkkarte(_vormerkkunde, medium),
+                    _service.getVormerkkarteFuer(medium));
+            if (_service.getVormerkkarteFuer(medium) == null)
+                System.out.println("Keine Vormerkkarte vorhanden - Fehler!");
+        }
     }
 
 }
