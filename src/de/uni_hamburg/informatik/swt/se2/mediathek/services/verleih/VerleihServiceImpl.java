@@ -346,6 +346,8 @@ public class VerleihServiceImpl extends AbstractObservableService
         assert istVormerkenMoeglich(kunde,
                 medien) : "Vorbedingung verletzt: istVerleihenMoeglich(kunde, medien)";
 
+        System.out.println("Dies ist für das Tutorial!");
+        
         for (Medium medium : medien)
         {
             if (_vormerkkarten.containsKey(medium))
