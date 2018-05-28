@@ -347,6 +347,7 @@ public class VerleihServiceImpl extends AbstractObservableService
                 medien) : "Vorbedingung verletzt: istVerleihenMoeglich(kunde, medien)";
 
         System.out.println("Dies ist für das Tutorial!");
+        // Kommentar
         
         for (Medium medium : medien)
         {
