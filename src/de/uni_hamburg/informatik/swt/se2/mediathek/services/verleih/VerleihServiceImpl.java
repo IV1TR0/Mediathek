@@ -296,7 +296,9 @@ public class VerleihServiceImpl extends AbstractObservableService implements Ver
 	
 	public boolean istVorgemerkt(Medium medium) {
 		assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumExistiert(medium)";
-		return _vormerkkarten.get(medium) != null;
+		if (_vormerkkarten.get(medium) != null) {
+		return _vormerkkarten.get(medium).getErstenVormerkerAndKeep() != null;}
+		else return false;
 	}
 	
 	public Vormerkkarte getVormerkkarteFuer(Medium medium) {

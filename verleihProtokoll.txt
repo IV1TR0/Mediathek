@@ -1347,3 +1347,29 @@ am 22.5.2018 verliehen an
     Anschrift:
     Fightstreet 99
     60311 Frankfurt
+Fri May 25 19:14:39 CEST 2018: Ausleihe
+CD:
+    Titel: Disturbia
+    Kommentar: gut
+    Interpret: Rihanna
+    Spiellänge: 90
+am 25.5.2018 verliehen an
+    Kundennummer: 123457
+    Name: Kai Konrad
+    Telefon: unbekannt
+    Anschrift:
+    Kannenweg 23
+    21868 Stade
+Fri May 25 19:14:42 CEST 2018: Rückgabe
+CD:
+    Titel: Hard candy
+    Kommentar: besser
+    Interpret: Madonna
+    Spiellänge: 65
+am 30.3.2017 verliehen an
+    Kundennummer: 123456
+    Name: Susi Sonnenschein
+    Telefon: unbekannt
+    Anschrift:
+    Sonnenallee 20
+    22760 Hamburg

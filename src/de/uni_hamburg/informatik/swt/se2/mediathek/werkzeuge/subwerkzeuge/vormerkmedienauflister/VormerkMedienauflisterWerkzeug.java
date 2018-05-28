@@ -95,7 +95,7 @@ public class VormerkMedienauflisterWerkzeug extends ObservableSubWerkzeug {
 				Vormerkkarte vormerkkarte = _verleihService.getVormerkkarteFuer(medium);
 				int anzahlVormerker = vormerkkarte.anzahlVormerker();
 				for(int i = 0; i < anzahlVormerker; i++ ) {
-					vormerker[i] = vormerkkarte.getErstenVormerkerAndRemove();
+					vormerker[i] = vormerkkarte.getErstenVormerkerAndKeep();
 				}
 			}
 			medienFormatierer.add(new VormerkMedienFormatierer(medium, entleiher, vormerker[0], vormerker[1], vormerker[2]));

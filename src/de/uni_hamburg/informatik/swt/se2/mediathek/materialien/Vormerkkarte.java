@@ -3,14 +3,13 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.materialien;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.medien.Medium;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Kunde;
 
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Vormerkkarte {
 
 	// Eigenschaften einer Vormerkkarte
 	private final Medium _medium;
-	private final ArrayBlockingQueue<Kunde> _vormerker = new ArrayBlockingQueue<Kunde>(3);
+	private final ArrayBlockingQueue<Kunde> _vormerker;
 
 	/**
 	 * Initialisert eine neue Vormerkkarte mit den gegebenen Daten.
@@ -25,7 +24,8 @@ public class Vormerkkarte {
 	 */
 	public Vormerkkarte(Kunde vormerker, Medium medium) {
 		_medium = medium;
-		_vormerker.add(vormerker);
+		_vormerker = new ArrayBlockingQueue<Kunde>(3);
+		fuegeEinenVormerkerHinzu(vormerker);
 	}
 
 	/**
@@ -112,4 +112,48 @@ public class Vormerkkarte {
 	public int anzahlVormerker() {
 		return _vormerker.size();
 	}
+	
+	public String getFormatiertenString()
+	{
+		ArrayBlockingQueue<Kunde> hilfsqueue = _vormerker;
+		String hilfsString = "VORMERKUNG:\n  " + _medium.getFormatiertenString() + "  vorgemerkt von\n";
+		while (hilfsqueue.peek() != null) {
+			hilfsString += hilfsqueue.poll().getFormatiertenString() + "  ,\n";
+		}
+		return hilfsString;
+	}
+	
+	@Override
+    public String toString()
+    {
+        return getFormatiertenString();
+    }
+	
+	@Override
+    public boolean equals(Object obj)
+    {
+        boolean result = false;
+        if (obj instanceof Vormerkkarte)
+        {
+            Vormerkkarte other = (Vormerkkarte) obj;
+
+            if (other.getErstenVormerkerAndKeep().equals(getErstenVormerkerAndKeep())
+            		&& other.anzahlVormerker() == anzahlVormerker())
+
+                result = true;
+        }
+        return result;
+    }
+	
+    @Override
+    public int hashCode()
+    {
+        final int prime = 32;
+        int result = 1;
+        result = prime * result
+                + ((getErstenVormerkerAndKeep() == null) ? 0 : getErstenVormerkerAndKeep().hashCode());
+        result = prime * result + ((_medium == null) ? 0 : _medium.hashCode());
+        result = prime * result + ((anzahlVormerker() == 0) ? 0 : anzahlVormerker());
+        return result;
+    }
 }
