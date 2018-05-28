@@ -2,6 +2,7 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.materialien;
 
 import static org.junit.Assert.assertEquals;
 
+
 import static org.junit.Assert.assertFalse;
 //import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -16,7 +17,7 @@ import de.uni_hamburg.informatik.swt.se2.mediathek.fachwerte.Kundennummer;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.medien.CD;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.medien.Medium;
 
-class VormerkkarteTest
+public class VormerkkarteTest
 {
 
     private Vormerkkarte _karte;

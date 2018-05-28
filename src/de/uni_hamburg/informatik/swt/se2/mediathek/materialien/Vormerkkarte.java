@@ -3,6 +3,7 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.materialien;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.medien.Medium;
 import de.uni_hamburg.informatik.swt.se2.mediathek.materialien.Kunde;
 
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Vormerkkarte
@@ -53,6 +54,9 @@ public class Vormerkkarte
     {
         System.out.println("Kunde: " + kunde.getNachname());
         System.out.println("Anzahl Vormerker: " + _vormerker.size());
+        for(Kunde vormerkeInQueue : _vormerker) {
+            System.out.println("Vormerker: " + vormerkeInQueue.getNachname());
+        }
         System.out.println(
                 "hatKundeSchonVorgemerkt(): " + _vormerker.contains(kunde));
         return _vormerker.contains(kunde);
@@ -89,6 +93,10 @@ public class Vormerkkarte
     public Medium getMedium()
     {
         return _medium;
+    }
+    
+    public Queue<Kunde> getVormerker(){
+        return _vormerker;
     }
 
     /**

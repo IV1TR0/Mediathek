@@ -2,7 +2,9 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.werkzeuge.subwerkzeuge.vorme
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
@@ -104,9 +106,10 @@ public class VormerkMedienauflisterWerkzeug extends ObservableSubWerkzeug
                 Vormerkkarte vormerkkarte = _verleihService
                     .getVormerkkarteFuer(medium);
                 int anzahlVormerker = vormerkkarte.anzahlVormerker();
+                LinkedList<Kunde> vormerkListClone = new LinkedList<Kunde>(vormerkkarte.getVormerker());
                 for (int i = 0; i < anzahlVormerker; i++)
                 {
-                    vormerker[i] = vormerkkarte.getErstenVormerkerAndKeep();
+                    vormerker[i] = vormerkListClone.removeFirst();
                 }
             }
             medienFormatierer.add(new VormerkMedienFormatierer(medium,
