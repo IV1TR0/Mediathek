@@ -81,6 +81,11 @@ public class Vormerkkarte
         return _vormerker.peek();
     }
 
+    /**
+     * Gibt den ersten Vormerker in der Warteschlange zurück und entfernt ihn anschleßend aus der Warteschlange.
+     * 
+     * @return
+     */
     public Kunde getErstenVormerkerAndRemove()
     {
         return _vormerker.poll();
@@ -96,6 +101,11 @@ public class Vormerkkarte
         return _medium;
     }
 
+    /**
+     * Gibt alle Vormerker zurück
+     * 
+     * @return Queue der Vormerker
+     */
     public Queue<Kunde> getVormerker()
     {
         return _vormerker;
@@ -139,6 +149,11 @@ public class Vormerkkarte
         return _vormerker.size();
     }
 
+    /**
+     * Gibt einen formatierten String mit allen Infos der Vormerkkarte zurück.
+     * 
+     * @return String formatierter String
+     */
     public String getFormatiertenString()
     {
         ArrayBlockingQueue<Kunde> hilfsqueue = _vormerker;

@@ -368,6 +368,15 @@ public class VerleihServiceImpl extends AbstractObservableService
         informiereUeberAenderung();
     }
 
+    /**
+     * Prüft, ob für ein Medim eine Vormerkung existiert.
+     * 
+     * @param medium Das Medium, für das geprüft werden soll
+     * 
+     * @require mediumImBestand == true
+     * 
+     * @return boolean
+     */
     public boolean istVorgemerkt(Medium medium)
     {
         assert mediumImBestand(
@@ -383,6 +392,11 @@ public class VerleihServiceImpl extends AbstractObservableService
         }
     }
 
+    /**
+     * Gibt die Vormerkkarte für ein bestimmtes Medium zurück, falls sie existiert.
+     * 
+     * @return Vormerkkarte
+     */
     public Vormerkkarte getVormerkkarteFuer(Medium medium)
     {
         if (_vormerkkarten.containsKey(medium))
@@ -395,6 +409,18 @@ public class VerleihServiceImpl extends AbstractObservableService
         }
     }
 
+    /**
+     * Prüft, ob Vormerken möglich ist (Kunde hat das Medium nicht schon ausgeliehen,
+     * es nicht schon vorgemerkt und es sind noch Vormerkplätze frei)
+     * 
+     * @param kunde Kunde für den geprüft werden soll
+     * @param medien Liste der zu prüfenden Medien
+     * 
+     * @require kundeIBestand == true
+     * @require medienImBestand == true
+     * 
+     * @return boolean
+     */
     public boolean istVormerkenMoeglich(Kunde kunde, List<Medium> medien)
     {
         assert kundeImBestand(
@@ -418,6 +444,14 @@ public class VerleihServiceImpl extends AbstractObservableService
         return vormerkenMoeglich;
     }
 
+    /**
+     * Prüft, ob Kunde bei allen ausgewählten Medien der erste Vormerker ist
+     * 
+     * @param medien Liste der zu prüfenden Medien
+     * @param kunde Kunde, dür den geprüft werden soll
+     * 
+     * @return boolean
+     */
     public boolean kundeIstBeiAllenErsterVormerker(List<Medium> medien,
             Kunde kunde)
     {
@@ -449,6 +483,13 @@ public class VerleihServiceImpl extends AbstractObservableService
 
     // Private Vormerk-Methoden
 
+    /**
+     * Prüft, ob für die ausgewählten Medien noch Vormerkungen aufgrund der Anzahl erlaubt sind.
+     * 
+     * @param medien Liste der zu überprüfenden Medien
+     * 
+     * @return boolean
+     */
     private boolean sindVormerkPlaetzeFrei(List<Medium> medien)
     {
         for (Medium medium : medien)
@@ -465,6 +506,14 @@ public class VerleihServiceImpl extends AbstractObservableService
         return true;
     }
 
+    /**
+     * Prüft, ob ein Kunde schon bei einem der ausgewählten Medien vorgemerkt hat
+     * 
+     * @param medien Liste der zu prüfenden Medien
+     * @param kunde Zu prüfender Kunde
+     * 
+     * @return boolean
+     */
     private boolean kundeHatSchonVorgemerktBei(List<Medium> medien, Kunde kunde)
     {
         for (Medium medium : medien)
@@ -484,6 +533,13 @@ public class VerleihServiceImpl extends AbstractObservableService
         return false;
     }
 
+    /**
+     * Prüft, ob ein Kunde eins der ausgewählten Medien schon ausgeliehen hat
+     * 
+     * @param medien Liste der zu prüfenden Medien
+     * @param kunde Zu prüfender Kunde
+     * @return boolean
+     */
     private boolean kundeHatMedienAusgeliehen(List<Medium> medien, Kunde kunde)
     {
         for (Medium medium : medien)
