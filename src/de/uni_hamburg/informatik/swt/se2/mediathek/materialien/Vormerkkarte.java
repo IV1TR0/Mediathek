@@ -54,7 +54,8 @@ public class Vormerkkarte
     {
         System.out.println("Kunde: " + kunde.getNachname());
         System.out.println("Anzahl Vormerker: " + _vormerker.size());
-        for(Kunde vormerkeInQueue : _vormerker) {
+        for (Kunde vormerkeInQueue : _vormerker)
+        {
             System.out.println("Vormerker: " + vormerkeInQueue.getNachname());
         }
         System.out.println(
@@ -94,8 +95,9 @@ public class Vormerkkarte
     {
         return _medium;
     }
-    
-    public Queue<Kunde> getVormerker(){
+
+    public Queue<Kunde> getVormerker()
+    {
         return _vormerker;
     }
 

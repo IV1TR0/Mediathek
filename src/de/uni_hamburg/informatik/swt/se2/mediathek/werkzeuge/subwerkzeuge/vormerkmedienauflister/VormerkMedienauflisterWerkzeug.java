@@ -106,7 +106,8 @@ public class VormerkMedienauflisterWerkzeug extends ObservableSubWerkzeug
                 Vormerkkarte vormerkkarte = _verleihService
                     .getVormerkkarteFuer(medium);
                 int anzahlVormerker = vormerkkarte.anzahlVormerker();
-                LinkedList<Kunde> vormerkListClone = new LinkedList<Kunde>(vormerkkarte.getVormerker());
+                LinkedList<Kunde> vormerkListClone = new LinkedList<Kunde>(
+                        vormerkkarte.getVormerker());
                 for (int i = 0; i < anzahlVormerker; i++)
                 {
                     vormerker[i] = vormerkListClone.removeFirst();
