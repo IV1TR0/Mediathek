@@ -2,6 +2,7 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.werkzeuge.vormerken;
 
 import java.awt.event.ActionEvent;
 
+
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -112,6 +113,7 @@ public class VormerkWerkzeug
     private void registriereServiceBeobachter()
     {
         registriereVormerkButtonAktualisierenAktion();
+        registriereStornierButtonAktualisiereAktion();
     }
 
     /**
@@ -130,6 +132,7 @@ public class VormerkWerkzeug
     private void registriereUIAktionen()
     {
         registriereVormerkAktion();
+        registriereStornierAktion();
     }
 
     /**
@@ -140,11 +143,29 @@ public class VormerkWerkzeug
     {
         _verleihService.registriereBeobachter(new ServiceObserver()
         {
+            @Override
+            public void reagiereAufAenderung()
+            {
+                System.out.println("Aktualisiere Vormerk aufgerufen!");
+                aktualisiereVormerkButton();
+            }
+        });
+    }
+    
+    /**
+     * Registriert die Aktion zur Aktualisierung des Vormerkbuttons, wenn eine
+     * Benachrichtigung vom Verleihservice auftaucht.
+     */
+    private void registriereStornierButtonAktualisiereAktion()
+    {
+        _verleihService.registriereBeobachter(new ServiceObserver()
+        {
 
             @Override
             public void reagiereAufAenderung()
             {
-                aktualisiereVormerkButton();
+                System.out.println("Aktualisiere Stornier aufgerufen!");
+                aktualisiereStornierButton();
             }
         });
     }
@@ -165,6 +186,23 @@ public class VormerkWerkzeug
                 }
             });
     }
+    
+    /**
+     * Registriert die Aktion, die ausgeführt wird, wenn auf den Vormerk-Button
+     * gedrückt wird.
+     */
+    private void registriereStornierAktion()
+    {
+        _vormerkUI.getStornierButton()
+            .addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    storniereAusgewaehlteMedien();
+                }
+            });
+    }
 
     /**
      * Registiert die Aktion, die ausgeführt wird, wenn ein Kunde ausgewählt
@@ -179,6 +217,7 @@ public class VormerkWerkzeug
             {
                 zeigeAusgewaehltenKunden();
                 aktualisiereVormerkButton();
+                aktualisiereStornierButton();
             }
         });
     }
@@ -197,6 +236,7 @@ public class VormerkWerkzeug
             {
                 zeigeAusgewaehlteMedien();
                 aktualisiereVormerkButton();
+                aktualisiereStornierButton();
             }
         });
     }
@@ -219,6 +259,37 @@ public class VormerkWerkzeug
 
         return vormerkenMoeglich;
     }
+    
+    /**
+     * Überprüft, ob ein Kunde selektiert ist und ob selektierte Medien für
+     * diesen Kunden storniert werden können.
+     * 
+     * @return true, wenn stornieren möglich ist, sonst false.
+     */
+    private boolean istStornierenMoeglich()
+    {
+        List<Medium> medien = _medienAuflisterWerkzeug.getSelectedMedien();
+        Kunde kunde = _kundenAuflisterWerkzeug.getSelectedKunde();
+        
+        System.out.println("istStornierenMoeglich() - es ist da");
+        
+        boolean kundeValid = (kunde != null);
+        boolean medienValid = !medien.isEmpty();
+        System.out.println("medien: " + medienValid);
+        
+        boolean stornierenValid = _verleihService.istStornierenMoeglich(kunde, medien);
+        
+        System.out.println("###############");
+        System.out.println("kunde: " + kundeValid);
+        System.out.println("storno: " + stornierenValid);
+        System.out.println("###############");
+        
+        boolean stornierenMoeglich =  kundeValid && medienValid && stornierenValid;
+        
+        System.out.println("Stornieren moeglich: " + stornierenMoeglich);
+
+        return stornierenMoeglich;
+    }
 
     /**
      * Merkt die ausgewählten Medien für einen Kunden vor. Diese Methode wird
@@ -238,6 +309,28 @@ public class VormerkWerkzeug
         catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Fehlermeldung",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
+     * Merkt die ausgewählten Medien für einen Kunden vor. Diese Methode wird
+     * über einen Listener angestoßen, der reagiert, wenn der Benutzer den
+     * VormerkButton drückt.
+     */
+    private void storniereAusgewaehlteMedien()
+    {
+        List<Medium> selectedMedien = _medienAuflisterWerkzeug
+            .getSelectedMedien();
+        Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
+        // TODO für Aufgabenblatt 6 (nicht löschen): Vormerken einbauen
+        try
+        {
+            _verleihService.storniere(selectedKunde, selectedMedien);
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Stornieren fehlgeschlagen",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -275,6 +368,22 @@ public class VormerkWerkzeug
         boolean istVormerkenMoeglich = istVormerkenMoeglich();
         _vormerkUI.getVormerkenButton()
             .setEnabled(istVormerkenMoeglich);
+    }
+    
+    /**
+     * Setzt den Ausleihbutton auf benutzbar (enabled) falls die gerade
+     * selektierten Medien alle ausgeliehen werden können und ein Kunde
+     * ausgewählt ist.
+     * 
+     * Wenn keine Medien selektiert sind oder wenn mindestes eines der
+     * selektierten Medien bereits ausgeliehen ist oder wenn kein Kunde
+     * ausgewählt ist, wird der Button ausgegraut.
+     */
+    private void aktualisiereStornierButton()
+    {
+        boolean istStornierenMoeglich = istStornierenMoeglich();
+        _vormerkUI.getStornierButton()
+            .setEnabled(istStornierenMoeglich);
     }
 
     /**

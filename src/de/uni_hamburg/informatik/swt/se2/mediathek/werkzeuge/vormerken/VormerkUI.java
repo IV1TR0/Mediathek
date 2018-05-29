@@ -23,6 +23,7 @@ class VormerkUI
 {
     // UI-Komponenten
     private JButton _vormerkenButton;
+    private JButton _stornierButton;
     private JPanel _ausleihePanel;
     private JSplitPane _auflisterSplitpane;
     private JPanel _anzeigerPanel;
@@ -122,7 +123,7 @@ class VormerkUI
         _ausleihePanel.setSize(240, -1);
         _ausleihePanel.setBackground(UIConstants.BACKGROUND_COLOR);
         erzeugeAnzeigerPanel();
-        erzeugeAusleihButton();
+        erzeugeAusleihUndStornierButton();
     }
 
     /**
@@ -143,7 +144,7 @@ class VormerkUI
     /**
      * Erzeugt den Ausleih-Button.
      */
-    private void erzeugeAusleihButton()
+    private void erzeugeAusleihUndStornierButton()
     {
         JPanel _buttonPanel = new JPanel();
         _ausleihePanel.add(_buttonPanel, BorderLayout.SOUTH);
@@ -153,8 +154,17 @@ class VormerkUI
 
         _vormerkenButton = new JButton();
         _buttonPanel.add(_vormerkenButton);
+        
+        _stornierButton = new JButton();
+        _buttonPanel.add(_stornierButton);
+        
+        _stornierButton.setText("stornieren");
+        _stornierButton.setPreferredSize(new Dimension(140, 50));
+        _stornierButton.setFont(UIConstants.BUTTON_FONT);
+        _stornierButton.setEnabled(false);
+        
         _vormerkenButton.setText("vormerken");
-        _vormerkenButton.setPreferredSize(new Dimension(140, 100));
+        _vormerkenButton.setPreferredSize(new Dimension(140, 50));
         _vormerkenButton.setSize(-1, -1);
         _vormerkenButton.setFont(UIConstants.BUTTON_FONT);
         _vormerkenButton.setEnabled(false);
@@ -177,6 +187,16 @@ class VormerkUI
     public JButton getVormerkenButton()
     {
         return _vormerkenButton;
+    }
+    
+    /**
+     * Gibt den Stornier-Button zurück.
+     * 
+     * @ensure result != null
+     */
+    public JButton getStornierButton()
+    {
+        return _stornierButton;
     }
 
     /**

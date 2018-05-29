@@ -239,4 +239,19 @@ public interface VerleihService extends ObservableService
      */
     Verleihkarte getVerleihkarteFuer(Medium medium);
 
+    /**
+     * Prüft, ob Stornieren möglich ist (Kunde ist Vormerker)
+     * 
+     * @param kunde Kunde für den geprüft werden soll
+     * @param medien Liste der zu prüfenden Medien
+     * 
+     * @require kundeImBestand == true
+     * @require medienImBestand == true
+     * 
+     * @return boolean
+     */
+    boolean istStornierenMoeglich(Kunde kunde, List<Medium> medien);
+
+    void storniere(Kunde selectedKunde, List<Medium> selectedMedien);
+
 }

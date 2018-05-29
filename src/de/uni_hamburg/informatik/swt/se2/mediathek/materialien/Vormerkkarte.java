@@ -122,7 +122,7 @@ public class Vormerkkarte
     public void storniereVormerkung(Kunde kunde) throws Exception
     {
         if (_vormerker.contains(kunde))
-        {
+        {   
             int amountVormerker = _vormerker.size();
             for (int i = 0; i < amountVormerker; i++)
             {
@@ -156,7 +156,10 @@ public class Vormerkkarte
      */
     public String getFormatiertenString()
     {
-        ArrayBlockingQueue<Kunde> hilfsqueue = _vormerker;
+        ArrayBlockingQueue<Kunde> hilfsqueue = new ArrayBlockingQueue<Kunde>(3);
+        for(Kunde vormerker : _vormerker) {
+            hilfsqueue.add(vormerker);
+        }
         String hilfsString = "VORMERKUNG:\n  " + _medium.getFormatiertenString()
                 + "  vorgemerkt von\n";
         while (hilfsqueue.peek() != null)
@@ -193,7 +196,7 @@ public class Vormerkkarte
     @Override
     public int hashCode()
     {
-        final int prime = 32;
+        final int prime = 37;
         int result = 1;
         result = prime * result + ((getErstenVormerkerAndKeep() == null) ? 0
                 : getErstenVormerkerAndKeep().hashCode());

@@ -416,7 +416,7 @@ public class VerleihServiceImpl extends AbstractObservableService
      * @param kunde Kunde für den geprüft werden soll
      * @param medien Liste der zu prüfenden Medien
      * 
-     * @require kundeIBestand == true
+     * @require kundeImBestand == true
      * @require medienImBestand == true
      * 
      * @return boolean
@@ -442,6 +442,29 @@ public class VerleihServiceImpl extends AbstractObservableService
         System.out.println("-------");
 
         return vormerkenMoeglich;
+    }
+    
+    /**
+     * Prüft, ob Stornieren möglich ist (Kunde ist Vormerker)
+     * 
+     * @param kunde Kunde für den geprüft werden soll
+     * @param medien Liste der zu prüfenden Medien
+     * 
+     * @require kundeImBestand == true
+     * @require medienImBestand == true
+     * 
+     * @return boolean
+     */
+    public boolean istStornierenMoeglich(Kunde kunde, List<Medium> medien) {
+        assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
+        assert medienImBestand(medien) : "Vorbedingung verletzt: medienImBestand(medien)";
+        for(Medium medium : medien) {
+            if(!_vormerkkarten.get(medium).getVormerker().contains(kunde)) {
+                System.out.println(kunde + " ist kein Vormerker!");
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -550,5 +573,19 @@ public class VerleihServiceImpl extends AbstractObservableService
             }
         }
         return false;
+    }
+
+    public void storniere(Kunde selectedKunde, List<Medium> selectedMedien)
+    {
+        for(Medium medium : selectedMedien) {
+            try
+            {
+                _vormerkkarten.get(medium).storniereVormerkung(selectedKunde);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 }
